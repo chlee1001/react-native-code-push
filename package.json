@@ -1,5 +1,5 @@
 {
-  "name": "react-native-code-push",
+  "name": "@chlee1001/react-native-code-push",
   "version": "10.0.0",
   "description": "React Native plugin for the CodePush service",
   "main": "CodePush.js",
@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/react-native-code-push"
+    "url": "https://github.com/chlee1001/react-native-code-push"
   },
   "dependencies": {
     "code-push": "^4.2.2",
