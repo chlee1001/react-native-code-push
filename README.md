@@ -12,7 +12,8 @@ with additional custom modifications for specific use cases.
 
 # React Native Module for CodePush
 > [!WARNING]
-> React Native CodePush won't support new Architecture. In order to use this plugin on React Native versions starting from 0.76 you will need to [opt out](https://reactnative.dev/blog/2024/10/23/the-new-architecture-is-here#opt-out) from new architecture.
+> ~~React Native CodePush won't support new Architecture. In order to use this plugin on React Native versions starting from 0.76 you will need to [opt out](https://reactnative.dev/blog/2024/10/23/the-new-architecture-is-here#opt-out) from new architecture.~~
+> React Native CodePush support for new architecture is in progress.
 >
 *Note: This README is only relevant to the latest version of our plugin. If you are using an older version, please switch to the relevant tag on [our GitHub repo](https://github.com/microsoft/react-native-code-push) to view the docs for that particular version.*
 
