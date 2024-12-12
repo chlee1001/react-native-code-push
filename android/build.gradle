@@ -14,9 +14,6 @@ buildscript {
 }
 
 allprojects {
-    android {
-        namespace "com.microsoft.codepush.react"
-    }
     repositories {
         mavenLocal()
         mavenCentral()
