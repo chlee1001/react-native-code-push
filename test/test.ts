@@ -70,7 +70,7 @@ class RNAndroid extends Platform.Android implements RNPlatform {
      * Returns the path to the binary of the given project on this platform.
      */
     getBinaryPath(projectDirectory: string): string {
-        return path.join(projectDirectory, TestConfig.TestAppName, "android", "app", "build", "outputs", "apk", "release", "app-release.apk");
+        return path.join(projectDirectory, TestConfig.TestAppName, "android", "build", "outputs", "apk", "release", "app-release.apk");
     }
 
     /**
@@ -78,31 +78,31 @@ class RNAndroid extends Platform.Android implements RNPlatform {
      */
     installPlatform(projectDirectory: string): Q.Promise<void> {
         const innerprojectDirectory: string = path.join(projectDirectory, TestConfig.TestAppName);
-        const gradleContent: string = slash(path.join(innerprojectDirectory, "node_modules", "react-native-code-push", "android", "codepush.gradle"));
+        const gradleContent: string = slash(path.join(innerprojectDirectory, "node_modules", "@chlee1001/react-native-code-push", "android", "codepush.gradle"));
 
         //// Set up gradle to build CodePush with the app
-        // Add CodePush to android/app/build.gradle
-        const buildGradle = path.join(innerprojectDirectory, "android", "app", "build.gradle");
+        // Add CodePush to android/build.gradle
+        const buildGradle = path.join(innerprojectDirectory, "android", "build.gradle");
 
         TestUtil.replaceString(buildGradle,
-            "apply from: file\\(\"../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle\"\\); applyNativeModulesAppBuildGradle\\(project\\)",
-            "apply from: file(\"../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle\"); applyNativeModulesAppBuildGradle(project)\napply from: \"" + gradleContent + "\"");
+            "apply plugin: \"com.facebook.react\"",
+            "apply plugin: \"com.facebook.react\"\napply from: \"" + gradleContent + "\"");
 
-        // Add CodePush to android/settings.gradle
-        const settingsGradle = path.join(innerprojectDirectory, "android", "settings.gradle");
-        TestUtil.replaceString(settingsGradle,
-            "include ':app'",
-            "include ':app', ':react-native-code-push'\nproject(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-code-push/android/app')");
+        // Disable new architecture
+        if (TestConfig.testOldArch) {
+            const gradleProperties = path.join(innerprojectDirectory, "android", "gradle.properties");
+            TestUtil.replaceString(gradleProperties, "newArchEnabled=true", "newArchEnabled=false");
+        }
 
         //// Set the app version to 1.0.0 instead of 1.0
         // Set the app version to 1.0.0 in android/app/build.gradle
         TestUtil.replaceString(buildGradle, "versionName \"1.0\"", "versionName \"1.0.0\"");
         // Set the app version to 1.0.0 in AndroidManifest.xml
-        TestUtil.replaceString(path.join(innerprojectDirectory, "android", "app", "src", "main", "AndroidManifest.xml"), "android:versionName=\"1.0\"", "android:versionName=\"1.0.0\"");
+        TestUtil.replaceString(path.join(innerprojectDirectory, "android", "src", "main", "AndroidManifest.xml"), "android:versionName=\"1.0\"", "android:versionName=\"1.0.0\"");
 
         //// Replace the MainApplication.java with the correct server url and deployment key
-        const string = path.join(innerprojectDirectory, "android", "app", "src", "main", "res", "values", "strings.xml");
-        const AndroidManifest = path.join(innerprojectDirectory, "android", "app", "src", "main", "AndroidManifest.xml");
+        const string = path.join(innerprojectDirectory, "android", "src", "main", "res", "values", "strings.xml");
+        const AndroidManifest = path.join(innerprojectDirectory, "android", "src", "main", "AndroidManifest.xml");
         TestUtil.replaceString(string, TestUtil.SERVER_URL_PLACEHOLDER, this.getServerUrl());
         TestUtil.replaceString(string, TestUtil.ANDROID_KEY_PLACEHOLDER, this.getDefaultDeploymentKey());
         TestUtil.replaceString(AndroidManifest, "android:allowBackup=\"false\"", "android:allowBackup=\"false\"" + "\n\t" + "android:usesCleartextTraffic=\"true\"");
@@ -119,8 +119,8 @@ class RNAndroid extends Platform.Android implements RNPlatform {
         return TestUtil.getProcessOutput("adb install -r " + this.getBinaryPath(projectDirectory), { cwd: androidDirectory }).then(() => { return null; });
     }
 
-    /** 
-     * Build function of the test application, the command depends on the OS 
+    /**
+     * Build function of the test application, the command depends on the OS
     */
     buildFunction(androidDirectory: string): Q.Promise<void> {
         const gradlewCommand = process.platform === "darwin" || process.platform === "linux" ? "./gradlew" : "gradlew";
@@ -177,10 +177,12 @@ class RNIOS extends Platform.IOS implements RNPlatform {
         const iOSProject: string = path.join(projectDirectory, TestConfig.TestAppName, "ios");
         const infoPlistPath: string = path.join(iOSProject, TestConfig.TestAppName, "Info.plist");
         const appDelegatePath: string = path.join(iOSProject, TestConfig.TestAppName, "AppDelegate.mm");
+        const podfilePath: string = path.join(iOSProject, "Podfile");
 
 
         // Install the Podfile
-        return TestUtil.getProcessOutput("pod install", { cwd: iOSProject })
+        return TestUtil.copyFile(path.join(TestConfig.templatePath, "ios", "Podfile"), podfilePath, true)
+            .then(() => TestUtil.getProcessOutput(`RCT_NEW_ARCH_ENABLED=${TestConfig.testOldArch ? 0 : 1} pod install`, { cwd: iOSProject }))
             // Put the IOS deployment key in the Info.plist
             .then(TestUtil.replaceString.bind(undefined, infoPlistPath,
                 "</dict>\n</plist>",
@@ -199,7 +201,7 @@ class RNIOS extends Platform.IOS implements RNPlatform {
             .then(TestUtil.copyFile.bind(undefined,
                 path.join(TestConfig.templatePath, "ios", TestConfig.TestAppName, "AppDelegate.mm"),
                 appDelegatePath, true))
-            .then<void>(TestUtil.replaceString.bind(undefined, appDelegatePath, TestUtil.CODE_PUSH_TEST_APP_NAME_PLACEHOLDER, TestConfig.TestAppName));
+            .then(TestUtil.replaceString.bind(undefined, appDelegatePath, TestUtil.CODE_PUSH_TEST_APP_NAME_PLACEHOLDER, TestConfig.TestAppName));
     }
 
     /**
@@ -211,7 +213,7 @@ class RNIOS extends Platform.IOS implements RNPlatform {
 
     /**
      * Maps project directories to whether or not they have built an IOS project before.
-     * 
+     *
      * The first build of an IOS project does not always succeed, so we always try again when it fails.
      *
      *  EXAMPLE:
@@ -307,13 +309,13 @@ class RNProjectManager extends ProjectManager {
         }
         mkdirp.sync(projectDirectory);
 
-        return TestUtil.getProcessOutput("npx react-native init " + appName + " --version 0.76.1 --install-pods", { cwd: projectDirectory, timeout: 30 * 60 * 1000 })
-            .then((e) => { console.log(`"npx react-native init ${appName}" success. cwd=${projectDirectory}`); return e; })
+        return TestUtil.getProcessOutput("npx @react-native-community/cli init " + appName + " --version 0.76.5 --install-pods", { cwd: projectDirectory, timeout: 30 * 60 * 1000 })
+            .then((e) => { console.log(`"npx @react-native-community/cli init ${appName}" success. cwd=${projectDirectory}`); return e; })
             .then(this.copyTemplate.bind(this, templatePath, projectDirectory))
             .then<void>(TestUtil.getProcessOutput.bind(undefined, TestConfig.thisPluginInstallString, { cwd: path.join(projectDirectory, TestConfig.TestAppName) }))
             .then(() => { return null; })
             .catch((error) => {
-                console.log(`"npx react-native init ${appName} failed". cwd=${projectDirectory}`, error);
+                console.log(`"npx @react-native-community/cli init ${appName} failed". cwd=${projectDirectory}`, error);
                 throw new Error(error);
             });
     }

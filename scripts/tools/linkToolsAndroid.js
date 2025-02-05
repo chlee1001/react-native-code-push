@@ -13,7 +13,7 @@ exports.getJSBundleFileOverride = `
 `;
 exports.reactNativeHostInstantiation = "new ReactNativeHost(this) {";
 exports.mainActivityClassDeclaration = "public class MainActivity extends ReactActivity {";
-exports.codePushGradleLink = `\napply from: "../../node_modules/react-native-code-push/android/codepush.gradle"`;
+exports.codePushGradleLink = `\napply from: "../../node_modules/@chlee1001/react-native-code-push/android/codepush.gradle"`;
 exports.deploymentKeyName = "CodePushDeploymentKey";
 
 exports.getMainApplicationLocation = function () {
@@ -29,7 +29,7 @@ exports.getStringsResourcesPath = function () {
 }
 
 exports.getBuildGradlePath = function () {
-    return path.join("android", "app", "build.gradle");
+    return path.join("android", "build.gradle");
 }
 
 exports.isJsBundleOverridden = function (codeContents) {

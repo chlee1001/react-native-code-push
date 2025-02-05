@@ -12,9 +12,9 @@ Requirements:
         sudo gem install cocoapods -n /usr/local/bin
 
 Usage: node create-app.js <appName> <reactNativeVersion> <reactNativeCodePushVersion>
-    1. node create-app.js 
+    1. node create-app.js
     2. node create-app.js myapp
-    3. node create-app.js myapp react-native@0.62 react-native-code-push@6.1.0 
+    3. node create-app.js myapp react-native@0.62 react-native-code-push@6.1.0
     4. node create-app.js myapp react-native@latest Microsoft/react-native-code-push
 
 Parameters:
@@ -245,11 +245,11 @@ function isReactNativeVersionLowerThan(version) {
 
 // Configuring android applications for react-native version higher than 0.60
 function androidSetup() {
-    const buildGradlePath = path.join('android', 'app', 'build.gradle');
+    const buildGradlePath = path.join('android', 'build.gradle');
     const settingsGradlePath = path.join('android', 'settings.gradle');
     const mainApplicationType = reactNativeVersionIsLowerThanV073 ? 'java' : 'kt';
-    const mainApplicationPath = path.join('android', 'app', 'src', 'main', 'java', 'com', appName, `MainApplication.${mainApplicationType}`);
-    const stringsResourcesPath = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
+    const mainApplicationPath = path.join('android', 'src', 'main', 'java', 'com', appName, `MainApplication.${mainApplicationType}`);
+    const stringsResourcesPath = path.join('android', 'src', 'main', 'res', 'values', 'strings.xml');
 
     let stringsResourcesContent = fs.readFileSync(stringsResourcesPath, "utf8");
     const insertAfterString = "<resources>";
