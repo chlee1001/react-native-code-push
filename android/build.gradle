@@ -33,7 +33,7 @@ def isNewArchitectureEnabled() {
 def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 if (IS_NEW_ARCHITECTURE_ENABLED) {
-    apply plugin: "com.facebook.react"
+    apply plugin: "com.facebook.reac"
 }
 
 def DEFAULT_COMPILE_SDK_VERSION = 26
