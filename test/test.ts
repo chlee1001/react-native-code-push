@@ -70,7 +70,7 @@ class RNAndroid extends Platform.Android implements RNPlatform {
      * Returns the path to the binary of the given project on this platform.
      */
     getBinaryPath(projectDirectory: string): string {
-        return path.join(projectDirectory, TestConfig.TestAppName, "android", "app", "build", "outputs", "apk", "release", "app-release.apk");
+        return path.join(projectDirectory, TestConfig.TestAppName, "android", "build", "outputs", "apk", "release", "app-release.apk");
     }
 
     /**
@@ -81,8 +81,8 @@ class RNAndroid extends Platform.Android implements RNPlatform {
         const gradleContent: string = slash(path.join(innerprojectDirectory, "node_modules", "@chlee1001/react-native-code-push", "android", "codepush.gradle"));
 
         //// Set up gradle to build CodePush with the app
-        // Add CodePush to android/app/build.gradle
-        const buildGradle = path.join(innerprojectDirectory, "android", "app", "build.gradle");
+        // Add CodePush to android/build.gradle
+        const buildGradle = path.join(innerprojectDirectory, "android", "build.gradle");
 
         TestUtil.replaceString(buildGradle,
             "apply plugin: \"com.facebook.react\"",
@@ -98,11 +98,11 @@ class RNAndroid extends Platform.Android implements RNPlatform {
         // Set the app version to 1.0.0 in android/app/build.gradle
         TestUtil.replaceString(buildGradle, "versionName \"1.0\"", "versionName \"1.0.0\"");
         // Set the app version to 1.0.0 in AndroidManifest.xml
-        TestUtil.replaceString(path.join(innerprojectDirectory, "android", "app", "src", "main", "AndroidManifest.xml"), "android:versionName=\"1.0\"", "android:versionName=\"1.0.0\"");
+        TestUtil.replaceString(path.join(innerprojectDirectory, "android", "src", "main", "AndroidManifest.xml"), "android:versionName=\"1.0\"", "android:versionName=\"1.0.0\"");
 
         //// Replace the MainApplication.java with the correct server url and deployment key
-        const string = path.join(innerprojectDirectory, "android", "app", "src", "main", "res", "values", "strings.xml");
-        const AndroidManifest = path.join(innerprojectDirectory, "android", "app", "src", "main", "AndroidManifest.xml");
+        const string = path.join(innerprojectDirectory, "android", "src", "main", "res", "values", "strings.xml");
+        const AndroidManifest = path.join(innerprojectDirectory, "android", "src", "main", "AndroidManifest.xml");
         TestUtil.replaceString(string, TestUtil.SERVER_URL_PLACEHOLDER, this.getServerUrl());
         TestUtil.replaceString(string, TestUtil.ANDROID_KEY_PLACEHOLDER, this.getDefaultDeploymentKey());
         TestUtil.replaceString(AndroidManifest, "android:allowBackup=\"false\"", "android:allowBackup=\"false\"" + "\n\t" + "android:usesCleartextTraffic=\"true\"");
