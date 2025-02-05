@@ -95,7 +95,7 @@ gradle.projectsEvaluated {
 
             // mitigates Resource and asset merger: Duplicate resources error
             project.delete(files("${jsBundleDir}"))
-            
+
             jsBundleDir.mkdirs()
             resourcesDir.mkdirs()
 

@@ -10,7 +10,7 @@
     "code",
     "push"
   ],
-  "author": "Microsoft Corporation",
+  "author": "chlee1001",
   "license": "MIT",
   "scripts": {
     "clean": "shx rm -rf bin",
@@ -20,6 +20,9 @@
     "test": "npm run build:tests && npm run test:setup && npm run test:fast",
     "test:android": "npm run build:tests && npm run test:setup:android && npm run test:fast:android",
     "test:ios": "npm run build:tests && npm run test:setup:ios && npm run test:fast:ios",
+    "test:oldArch": "export TEST_OLD_ARCH=true && npm run build:tests && npm run test:setup && npm run test:fast",
+    "test:oldArch:android": "export TEST_OLD_ARCH=true && npm run build:tests && npm run test:setup:android && npm run test:fast:android",
+    "test:oldArch:ios": "export TEST_OLD_ARCH=true && npm run build:tests && npm run test:setup:ios && npm run test:fast:ios",
     "test:setup": "mocha --recursive bin/test --android --ios --setup",
     "test:setup:android": "mocha --recursive bin/test --android --setup",
     "test:setup:ios": "mocha --recursive bin/test --ios --setup",
@@ -35,7 +38,7 @@
     "url": "https://github.com/chlee1001/react-native-code-push"
   },
   "dependencies": {
-    "code-push": "^4.2.2",
+    "code-push": "4.2.3",
     "glob": "^7.1.7",
     "hoist-non-react-statics": "^3.3.2",
     "inquirer": "^8.1.5",
