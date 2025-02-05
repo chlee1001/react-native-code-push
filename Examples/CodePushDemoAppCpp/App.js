@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-import CodePush from "react-native-code-push";
+import CodePush from "@chlee1001/react-native-code-push";
 
 class App extends Component<{}> {
   constructor() {
@@ -86,7 +86,7 @@ class App extends Component<{}> {
       this.codePushDownloadDidProgress.bind(this)
     );
   }
-  
+
   restartApp() {
 	  CodePush.restartApp();
   }
